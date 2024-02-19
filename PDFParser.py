@@ -121,7 +121,7 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
             else:
                 st.warning(f"Unable to display the first page image for {file.name}")
 
-            st.divider()
+            # st.divider()
             
 
         with col1:
