@@ -24,7 +24,7 @@ st.title("DrillParse - PDF")
 st.write("Automate and customized pre-processing of Unstructured Data of Daily Drilling Report (DDR) in a general-manner of extraction from various DDR templates.")
 
 # st.caption("Version Note")
-st.caption("Assumption of all DDRs templates across multiple sheets and xlsx files are consistent.")
+st.caption("Assumption of all DDRs templates across PDF pages are consistent.")
 st.divider()
 
 st.subheader("Drilling Report Uploader",divider=True)
@@ -228,7 +228,6 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
 
                 # time column
                 starttime_index = st.text_input("Start Time Index")
-                starttime_index = int(starttime_index)
                 # time_regex = st.text_input("Start Time Regular Expression (if required)")
 
                 # # Split the input into key and value using ":" as the delimiter
@@ -241,33 +240,41 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
 
                 # time column
                 duration_index = st.text_input("Duration Index")
-                duration_index = int(duration_index)
                 duration_sep = st.text_input("Duration Seperator")
 
             
 
                 # Phase column
                 phase_index = st.text_input("Phase Index")
-                phase_index = int(phase_index)
+                
 
                 # Task column
                 task_index = st.text_input("Task Index")
-                task_index = int(task_index)
+                
 
                 # Activity column
                 activity_index = st.text_input("Activity Index")
-                activity_index = int(activity_index)
+                
 
                 # Code column
                 code_index = st.text_input("Code Index")
-                code_index = int(code_index)
+                
 
                 # Code column
                 enddepth_index = st.text_input("End Depth Index")
-                enddepth_index = int(enddepth_index)
+                
 
                 # Multi-line comments column
                 comment_index = st.text_input("Comment Index")
+                
+
+                starttime_index = int(starttime_index)
+                duration_index = int(duration_index)
+                phase_index = int(phase_index)
+                task_index = int(task_index)
+                activity_index = int(activity_index)
+                code_index = int(code_index)
+                enddepth_index = int(enddepth_index)
                 comment_index = int(comment_index)
             
 
