@@ -277,7 +277,7 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
                 
 
                 # Multi-line comments column
-                comment)index = 0
+                comment_index = 0
                 comment_index = st.text_input("Comment Index (Integer)")
                 
                 
