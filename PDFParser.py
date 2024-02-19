@@ -103,7 +103,7 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
 
         st.subheader("Parser Configuration",divider=True)
         
-        col0 , col1, col2 = st.columns((2,1,1), gap="large")
+        col0 , col1, col2 = st.columns((2,1,1), gap="medium")
 
         with col0:
             
