@@ -12,6 +12,8 @@ import pyautogui
 from subprocess import Popen
 import subprocess
 import re
+from PIL import Image
+import pickle
 
 # Use the full page instead of a narrow central column
 st.set_page_config(layout="wide")
@@ -48,7 +50,7 @@ def pdf_to_images(file_path):
 temp_folder = tempfile.TemporaryDirectory()
 
 # Upload files
-uploaded_files = st.file_uploader("Upload PDF and .bat files", accept_multiple_files=True)
+uploaded_files = st.file_uploader("Upload PDF file", accept_multiple_files=True)
 
 if st.button("Reset Process"):
             
@@ -136,23 +138,35 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
 
             st.divider()
 
-            
 
-        
+            mode = st.radio("Parser Mode",["Column Marker","Index"])
+
             # Start Date
             project_name = st.text_input("Project/Company Name")
 
             date_check = st.checkbox("Date info in table column?")
 
-            if date_check is False:
+            if (date_check is False) and (mode == "Column Marker"):
                 startmarker_date = st.text_input("Start Date Marker")
                 date_finder = st.selectbox("Date Search Method",("CellWithMarker","CellBelowMarker","CellBelowMarkerIgnoreEmpty","FirstNonEmptyCellAfterMarker","CellWithMarkerOrFirstNonEmptyCellAfterMarker","RowsBetweenMarkers"))
                 date_format = st.text_input("Date Format")
 
-            elif date_check:
+            elif (date_check is False) and (mode == "Index"):
+                startmarker_date = st.text_input("Start Date Marker")
+                date_finder = st.selectbox("Date Search Method",("CellWithMarker","CellBelowMarker","CellBelowMarkerIgnoreEmpty","FirstNonEmptyCellAfterMarker","CellWithMarkerOrFirstNonEmptyCellAfterMarker","RowsBetweenMarkers"))
+                date_format = st.text_input("Date Format")
+
+            elif date_check and (mode == "Column Marker"):
                 startmarker_date1 = st.text_input("Start Date Marker")
                 date_finder1 = st.selectbox("Date Search Method",("CellBelowMarker","CellWithMarker","CellBelowMarkerIgnoreEmpty","FirstNonEmptyCellAfterMarker","CellWithMarkerOrFirstNonEmptyCellAfterMarker","RowsBetweenMarkers"))
                 date_format1 = st.text_input("Date Format")
+
+            elif date_check and (mode == "Index"):
+                
+                # date_finder1 = st.selectbox("Date Search Method",("CellBelowMarker","CellWithMarker","CellBelowMarkerIgnoreEmpty","FirstNonEmptyCellAfterMarker","CellWithMarkerOrFirstNonEmptyCellAfterMarker","RowsBetweenMarkers"))
+                date_format1 = st.text_input("Date Format")
+                date_index = st.text_input("Start Date Index")
+
 
             # Borehole
             startmarker_borehole = st.text_input("Borehole Marker")
@@ -175,39 +189,87 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
 
             ### Table columns detail
 
-            # time column
-            startmarker_time = st.text_input("Start Time Marker")
-            time_regex = st.text_input("Start Time Regular Expression (if required)")
+            if mode == "Column Marker":
 
-            # Split the input into key and value using ":" as the delimiter
-            key, value = time_regex.split(": ", 1) if ": " in time_regex  else (time_regex , "")
+                # time column
+                startmarker_time = st.text_input("Start Time Marker")
+                # time_regex = st.text_input("Start Time Regular Expression (if required)")
 
-            time_format = st.text_input("Time Format")
+                # # Split the input into key and value using ":" as the delimiter
+                # key, value = time_regex.split(": ", 1) if ": " in time_regex  else (time_regex , "")
 
-            # Split the input into a list
-            time_format = [format.strip() for format in time_format.split(',')]
+                time_format = st.text_input("Time Format")
 
-            # time column
-            startmarker_duration = st.text_input("Duration Marker")
-            duration_sep = st.text_input("Duration Seperator")
+                # Split the input into a list
+                time_format = [format.strip() for format in time_format.split(',')]
 
-        
+                # time column
+                startmarker_duration = st.text_input("Duration Marker")
+                duration_sep = st.text_input("Duration Seperator")
 
-            # Phase column
-            startmarker_phase = st.text_input("Phase Marker")
+            
 
-            # Task column
-            startmarker_task = st.text_input("Task Marker")
+                # Phase column
+                startmarker_phase = st.text_input("Phase Marker")
 
-            # Activity column
-            startmarker_activity = st.text_input("Activity Marker")
+                # Task column
+                startmarker_task = st.text_input("Task Marker")
 
-            # Code column
-            startmarker_code = st.text_input("Code Marker")
+                # Activity column
+                startmarker_activity = st.text_input("Activity Marker")
 
-            # Multi-line comments column
-            startmarker_comment = st.text_input("Comment Marker")
-        
+                # Code column
+                startmarker_code = st.text_input("Code Marker")
+
+                # Multi-line comments column
+                startmarker_comment = st.text_input("Comment Marker")
+
+            elif mode == "Index":
+
+                # time column
+                starttime_index = st.text_input("Start Time Index")
+                starttime_index = int(starttime_index)
+                # time_regex = st.text_input("Start Time Regular Expression (if required)")
+
+                # # Split the input into key and value using ":" as the delimiter
+                # key, value = time_regex.split(": ", 1) if ": " in time_regex  else (time_regex , "")
+
+                time_format = st.text_input("Time Format")
+
+                # Split the input into a list
+                time_format = [format.strip() for format in time_format.split(',')]
+
+                # time column
+                duration_index = st.text_input("Duration Index")
+                duration_index = int(duration_index)
+                duration_sep = st.text_input("Duration Seperator")
+
+            
+
+                # Phase column
+                phase_index = st.text_input("Phase Index")
+                phase_index = int(phase_index)
+
+                # Task column
+                task_index = st.text_input("Task Index")
+                task_index = int(task_index)
+
+                # Activity column
+                activity_index = st.text_input("Activity Index")
+                activity_index = int(activity_index)
+
+                # Code column
+                code_index = st.text_input("Code Index")
+                code_index = int(code_index)
+
+                # Code column
+                enddepth_index = st.text_input("End Depth Index")
+                enddepth_index = int(enddepth_index)
+
+                # Multi-line comments column
+                comment_index = st.text_input("Comment Index")
+                comment_index = int(comment_index)
+            
 
         
 
@@ -217,11 +279,17 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
 
         st.divider()
 
-        parse = st.button("Parse PDF")
+        if 'clicked' not in st.session_state:
+            st.session_state.clicked = False
+        
+        def click_button():
+            st.session_state.clicked = True
 
-        if parse:
+        st.button("Parse PDF",on_click=click_button)
 
-            if date_check is False:
+        if st.session_state.clicked:
+
+            if (date_check is False) and (mode == "Column Marker"):
                 # Create a dictionary with user inputs
                 json_data = {
                                 "InputBlocks": [
@@ -230,7 +298,7 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
                                     "Name": "ReportDate",
                                     "StartMarker": startmarker_date,
                                     "SearchMethod": date_finder,
-                                    "Formats": date_format
+                                    "Formats": [date_format]
                                     },
                                     {
                                     "Type": "Text",
@@ -250,11 +318,8 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
                                         "Name": "StartTime",
                                         "Type": "Time",
                                         "IsKeyColumn": True,
-                                        "ReplaceValues": {
-                                            key:value
-                                        },
                                         "DefaultValue": "",	
-                                        "Formats": [time_format],
+                                        "Formats": time_format,
                                         "StartMarker": startmarker_time,
                                         "AddDayIfZero":True,
                                         "IsObligatory": True
@@ -419,7 +484,7 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
             
 
 
-            elif date_check:
+            elif date_check and (mode == "Column Marker"):
 
                 # Create a dictionary with user inputs
                 json_data = {
@@ -450,9 +515,6 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
                                         "Name": "StartTime",
                                         "Type": "Time",
                                         "IsKeyColumn": True,
-                                        "ReplaceValues": {
-                                            f"{time_regex}"
-                                        },
                                         "DefaultValue": "",	
                                         "Formats": time_format,
                                         "StartMarker": startmarker_time,
@@ -616,6 +678,230 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
                                 }
                                 }
 
+            elif (date_check is False) and (mode == "Index"):
+
+                json_data = {
+                                "InputBlocks": [
+                                    {
+                                    "Type": "Date",
+                                    "Name": "ReportDate",
+                                    "StartMarker": startmarker_date,
+                                    "SearchMethod": date_finder,
+                                    "Formats": [date_format]
+                                    },
+                                    {
+                                    "Type": "Text",
+                                    "Name": "BoreholeName",
+                                    "StartMarker": startmarker_borehole,
+                                    "SearchMethod": borehole_finder,
+                                    "DefaultValue": ""
+                                    },
+                                    {
+                                    "Type": "Table",
+                                    "Name": "DDR",
+                                    "StartMarker": startmarker_table,
+                                    "EndMarker": endmarker_table,
+                                    "SearchMethod": table_finder,
+                                    "TableColumns": [
+                                        {
+                                        "Name": "StartTime",
+                                        "Type": "Time",
+                                        "IsKeyColumn": True,
+                                        "DefaultValue": "",
+                                        "Formats": time_format,
+                                        "AddDayIfZero": True,
+                                        "Index": starttime_index,
+                                        "IsObligatory": True
+                                        },
+                                        {
+                                        "Name": "Duration",
+                                        "Type": "Hours",
+                                        "Index": duration_index,
+                                        "DecimalSeparator": duration_sep,
+                                        "IsObligatory": True
+                                        },
+                                        {
+                                        "Name": "Phase",
+                                        "Type": "Text",
+                                        "Index": phase_index,
+                                        "IsObligatory": True
+                                        },
+                                        {
+                                        "Name": "Task",
+                                        "Type": "Multiline",
+                                        "Index": task_index,
+                                        "IsObligatory": True
+                                        },
+                                        {
+                                        "Name": "Activity",
+                                        "Type": "Text",
+                                        "Index": activity_index,
+                                        "IsObligatory": True
+                                        },
+                                        {
+                                        "Name": "Code",
+                                        "Type": "Text",
+                                        "Index": code_index,
+                                        "IsObligatory": True
+                                        },
+                                        {
+                                        "Name": "EndDepth",
+                                        "Type": "Text",
+                                        "Index": enddepth_index,
+                                        "IsObligatory": True
+                                        },
+                                        {
+                                        "Name": "Comments",
+                                        "Type": "Multiline",
+                                        "Index": comment_index,
+                                        "IsObligatory": True
+                                        }
+                                    ]
+                                    }
+                                ],
+                                "OutputTable": {
+                                    "Columns": [
+                                    {
+                                        "Name": "BoreholeName",
+                                        "HeaderText": "Borehole",
+                                        "SourceBlocks": [
+                                        "BoreholeName"
+                                        ]
+                                    },
+                                    {
+                                        "Name": "DailyCost",
+                                        "HeaderText": "Daily Cost",
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "Phase",
+                                        "HeaderText": "Phase",
+                                        "SourceBlocks": [
+                                        "DDR.Phase"
+                                        ],
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "BoreholeSection",
+                                        "HeaderText": "Borehole Section",
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "StartDate",
+                                        "HeaderText": "Start Time",
+                                        "SourceBlocks": [
+                                        "ReportDate","DDR.StartTime"
+                                        ],
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "EndDate",
+                                        "HeaderText": "End Time",
+                                        "SourceBlocks": [
+                                        "ReportDate",
+                                        "DDR.StartTime",
+                                        "DDR.Duration"
+                                        ],
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "Duration",
+                                        "HeaderText": "Duration(h)",
+                                        "SourceBlocks": [
+                                        "DDR.Duration"
+                                        ],
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "StartDepth",
+                                        "HeaderText": "Start Depth(m)",
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "EndDepth",
+                                        "HeaderText": "End Depth(m)",
+                                        "SourceBlocks": [
+                                        "DDR.EndDepth"
+                                        ],
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "Code",
+                                        "HeaderText": "Operation Code",
+                                        "SourceBlocks": [
+                                        "DDR.Task"
+                                        ],
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "ActivityCode",
+                                        "HeaderText": "Activity Code",
+                                        "SourceBlocks": [
+                                        "DDR.Activity"
+                                        ],
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "SubCode",
+                                        "HeaderText": "Sub Code",
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "Planned",
+                                        "HeaderText": "Planned",
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "TimeType",
+                                        "HeaderText": "Time Classification",
+                                        "Mode": "Cell",
+                                        "SourceBlocks": [
+                                        "DDR.Code"
+                                        ],
+                                        "ReplaceValues": {
+                                        "^P.*$": "Productive"
+                                        },
+                                        "DefaultValue": "Non-Productive"
+                                    },
+                                    {
+                                        "Name": "NPTReason",
+                                        "HeaderText": "NPT Reason",
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "NPTVendor",
+                                        "HeaderText": "NPT Vendor",
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "Comments",
+                                        "HeaderText": "Comments",
+                                        "SourceBlocks": [
+                                        "DDR.Comments"
+                                        ],
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "TranslatedComments",
+                                        "HeaderText": "Translated Comments",
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "Perforation",
+                                        "HeaderText": "Perforation",
+                                        "Mode": "Cell"
+                                    },
+                                    {
+                                        "Name": "AdditionalCode",
+                                        "HeaderText": "Additional Code",
+                                        "Mode": "Cell"
+                                    }
+                                    ]
+                                }
+                                }
+
+
+
             # Convert sets to lists in the JSON data
             def convert_sets_to_lists(obj):
                 if isinstance(obj, set):
@@ -658,14 +944,93 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
             # subprocess.run([f"pdfparser/PdfParser/Parser/{project_name}.bat"])
                     
             excel_path = os.path.join(output_file_path,"output.xlsx")
-            final_df = pd.read_excel(f"{excel_path}")
+            # final_df = pd.read_excel(f"{excel_path}")
+            
 
-            st.subheader("Extraction Output Display",divider=True)
+            # Visualize pdf page bbox
+            # Check if the file has a json extension
+            for file1 in os.listdir(output_file_path):
 
-            # Display the DataFrame with highlighting empty cells
-            st.data_editor(final_df,height=900,num_rows="dynamic")
+                if file1.endswith('.json'):
+                    
+                    json_output = os.path.join(output_file_path, file1)
 
-            st.success("PDF Parsed Successfully !")
+                    # Get a list of all files in the directory
+                    all_files = os.listdir(input_file_path)
+
+                    # Filter for PDF files
+                    pdf_files = [file for file in all_files if file.lower().endswith('.pdf')]
+
+                    pdf_name = pdf_files[0].replace('.json', '.pdf')
+                    pdf_path = os.path.join(input_file_path, pdf_name)
+                    output_folder = output_file_path
+                    
+
+                    print("zahid")
+
+                    
+                    # Check if the Excel file exists
+                    if os.path.exists(excel_path):
+                        try:
+                            # Attempt to read the Excel file
+                            final_df = pd.read_excel(excel_path)
+
+                            # Continue with your existing code using final_df...
+                            st.subheader("Extraction Output Display",divider=True)
+
+                            # Display the DataFrame with highlighting empty cells
+                            st.data_editor(final_df,height=900,num_rows="dynamic")
+
+                            st.success("PDF Parsed Successfully !")
+
+                        except Exception as e:
+                            st.error(f"An error occurred while reading the Excel file: {e}")
+                            st.info("Running viz_bbox.py as a fallback...")
+
+                           
+
+                            # Run viz_bbox.py script
+                            subprocess.run(["python", "viz_bbox.py", pdf_path, json_output, output_folder,str(page_num)])
+
+                            # Display the generated image
+                            image_path = os.path.join(output_file_path,f"page_{page_num}.jpg")
+                            image_path = image_path.replace("\\", "\\\\")  # Replace single backslashes with double backslashes
+                            image = Image.open(image_path)
+
+                            st.image(image, caption=f"Page {page_num}")
+
+                    else:
+                        st.error(f"The Excel file does not exist: {excel_path}")
+
+                        
+
+                        # Run viz_bbox.py script
+                        subprocess.run(["python", "viz_bbox.py", pdf_path, json_output, output_folder,str(page_num)])
+
+                        # Display the generated image
+                        image_path = os.path.join(output_file_path,f"page_{page_num}.jpg")
+                        # image_path = image_path.replace("\\", "\\\\")  # Replace single backslashes with double backslashes
+                        image = Image.open(image_path)
+
+                        st.divider()
+
+                        st.subheader("View Page Bounding Boxes",divider=True)
+
+                        st.image(image, caption=f"Page {page_num}",width=800)
+                        
+                        
+
+
+
+
+
+
+            
+
+
+
+            
+
 
 
 
