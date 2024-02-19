@@ -230,7 +230,10 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
             elif mode == "Index":
 
                 # time column
+                starttime_index = 0
                 starttime_index = st.text_input("Start Time Index (Integer)")
+                
+
                 # time_regex = st.text_input("Start Time Regular Expression (if required)")
 
                 # # Split the input into key and value using ":" as the delimiter
@@ -242,35 +245,43 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
                 time_format = [format.strip() for format in time_format.split(',')]
 
                 # time column
+                duration_index = 0
                 duration_index = st.text_input("Duration Index (Integer)")
                 duration_sep = st.text_input("Duration Seperator (Eg: 1.5 hrs --> '.')")
 
             
 
                 # Phase column
+                phase_index = 0
                 phase_index = st.text_input("Phase Index (Integer)")
                 
 
                 # Task column
+                task_index = 0
                 task_index = st.text_input("Task Index (Integer)")
                 
 
                 # Activity column
+                activity_index = 0
                 activity_index = st.text_input("Activity Index (Integer)")
                 
 
                 # Code column
+                code_index = 0
                 code_index = st.text_input("Code Index (Integer)")
                 
 
                 # Code column
+                enddepth_index = 0
                 enddepth_index = st.text_input("End Depth Index (Integer)")
                 
 
                 # Multi-line comments column
+                comment)index = 0
                 comment_index = st.text_input("Comment Index (Integer)")
                 
-
+                
+                
                 starttime_index = int(starttime_index)
                 duration_index = int(duration_index)
                 phase_index = int(phase_index)
