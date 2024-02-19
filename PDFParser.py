@@ -149,23 +149,23 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
             if (date_check is False) and (mode == "Column Marker"):
                 startmarker_date = st.text_input("Start Date Marker")
                 date_finder = st.selectbox("Date Search Method",("CellWithMarker","CellBelowMarker","CellBelowMarkerIgnoreEmpty","FirstNonEmptyCellAfterMarker","CellWithMarkerOrFirstNonEmptyCellAfterMarker","RowsBetweenMarkers"))
-                date_format = st.text_input("Date Format")
+                date_format = st.text_input("Date Format",value="dd/MM/yyyy")
 
             elif (date_check is False) and (mode == "Index"):
                 startmarker_date = st.text_input("Start Date Marker")
                 date_finder = st.selectbox("Date Search Method",("CellWithMarker","CellBelowMarker","CellBelowMarkerIgnoreEmpty","FirstNonEmptyCellAfterMarker","CellWithMarkerOrFirstNonEmptyCellAfterMarker","RowsBetweenMarkers"))
-                date_format = st.text_input("Date Format")
+                date_format = st.text_input("Date Format",value="dd/MM/yyyy")
 
             elif date_check and (mode == "Column Marker"):
                 startmarker_date1 = st.text_input("Start Date Marker")
                 date_finder1 = st.selectbox("Date Search Method",("CellBelowMarker","CellWithMarker","CellBelowMarkerIgnoreEmpty","FirstNonEmptyCellAfterMarker","CellWithMarkerOrFirstNonEmptyCellAfterMarker","RowsBetweenMarkers"))
-                date_format1 = st.text_input("Date Format")
+                date_format1 = st.text_input("Date Format",value="dd/MM/yyyy")
 
             elif date_check and (mode == "Index"):
                 
                 # date_finder1 = st.selectbox("Date Search Method",("CellBelowMarker","CellWithMarker","CellBelowMarkerIgnoreEmpty","FirstNonEmptyCellAfterMarker","CellWithMarkerOrFirstNonEmptyCellAfterMarker","RowsBetweenMarkers"))
                 date_format1 = st.text_input("Date Format")
-                date_index = st.text_input("Start Date Index")
+                date_index = st.text_input("Start Date Index (Integer)")
 
 
             # Borehole
