@@ -8,7 +8,7 @@ import os
 from PIL import Image
 import io
 import pandas as pd
-import pyautogui
+# import pyautogui
 from subprocess import Popen
 import subprocess
 import re
@@ -66,7 +66,7 @@ if st.button("Reset Process"):
                     print(f"Error deleting {file_path}: {e}")
 
 
-            pyautogui.hotkey("ctrl", "F5")
+            # pyautogui.hotkey("ctrl", "F5")
 
 col1,col2 = st.columns(2)
 
