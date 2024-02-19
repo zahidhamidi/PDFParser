@@ -208,7 +208,7 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
 
                 # time column
                 startmarker_duration = st.text_input("Duration Marker")
-                duration_sep = st.text_input("Duration Seperator (Eg: 10:30 -> ':'")
+                duration_sep = st.text_input("Duration Seperator (Eg: 1.5 hrs --> '.')")
 
             
 
@@ -243,7 +243,7 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
 
                 # time column
                 duration_index = st.text_input("Duration Index (Integer)")
-                duration_sep = st.text_input("Duration Seperator")
+                duration_sep = st.text_input("Duration Seperator (Eg: 1.5 hrs --> '.')")
 
             
 
