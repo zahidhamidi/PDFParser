@@ -198,10 +198,13 @@ if uploaded_files and input_file_path and output_file_path and exe_file_path and
                 # # Split the input into key and value using ":" as the delimiter
                 # key, value = time_regex.split(": ", 1) if ": " in time_regex  else (time_regex , "")
 
-                time_format = st.text_input("Time Format")
+                time_format = st.text_input("Time Format",value="HH:mm")
 
-                # Split the input into a list
-                time_format = [format.strip() for format in time_format.split(',')]
+                # Check if the input is a list
+                if isinstance(time_format, list):
+                    # Strip each element in the list
+                    time_format = [format.strip() for format in time_format]
+
 
                 # time column
                 startmarker_duration = st.text_input("Duration Marker")
